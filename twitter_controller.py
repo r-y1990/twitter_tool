@@ -12,12 +12,8 @@ BASE_URL = 'https://api.twitter.com/1.1/'
 
 class TwitterController:
     '''
-    TODO: やることが多い
-    ・ファイル名の変更
-    ・処理分けを考える
-    ・いちおう構成を記載しておく
-    ・設定ファイル化
-
+    Twitter関連のクラス
+    認証関連は設定ファイルに記載。
     '''
 
     def __init__(self):
@@ -51,14 +47,12 @@ class TwitterController:
         res = self.twitter.get(url)
 
         # エラーであればリトライ
-        # while not res.status_code == 200 or res.status_code in (420, 429):
         while not res.status_code == 200 and 10 <= retry_count:
             # v1のエラーコードを受信する場合はリトライ
             if res.status_code in (420, 429):
                 retry_count += 1
             else:
                 # TwitterAPIのエラーでない場合は異常としてNoneを返却
-                print('arere')
                 return None
             time.sleep(30)
 
@@ -74,7 +68,6 @@ class TwitterController:
         while True:
             # API実施
             res = self.fetch_followers(next_cursor=next_cursor)
-            print('nextcursor:', next_cursor, res)
             if res is None:
                 return -1
 
@@ -98,4 +91,3 @@ class TwitterController:
         print(len(info))
         db.insert_data(info)
         db.commit()
-

@@ -22,7 +22,9 @@ class Dbmaster():
         try:
             self.session.add_all(items)
         finally:
-            print('Session Close')
+            # Commitタイミングとか検討
+            # SQLAlchemyはセッションとか切る必要なさそう
+            pass
 
     def BeginSession(self):
         self.session = sessionmaker(bind=self.engine)()
