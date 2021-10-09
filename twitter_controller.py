@@ -25,7 +25,7 @@ class TwitterController:
     def __del__(self):
         self.db = None
 
-    def extract_follower(self, user, current_date):
+    def __extract_follower(self, user, current_date):
         follower = Follower_data()
 
         follower.api_id = user['id']
@@ -37,7 +37,7 @@ class TwitterController:
 
         return follower
 
-    def fetch_followers(self, next_cursor=None):
+    def _fetch_followers(self, next_cursor=None):
         retry_count = 0
 
         # TwitterAPIを実行する
@@ -60,21 +60,24 @@ class TwitterController:
 
         return res
 
-    def execute(self):
+    def fetch_follower_list(self):
+        '''
+        TODO:リストを返却するように修正する
+        '''
         info = []
         next_cursor = None
         current_date = datetime.datetime.now()
 
         while True:
             # API実施
-            res = self.fetch_followers(next_cursor=next_cursor)
+            res = self._fetch_followers(next_cursor=next_cursor)
             if res is None:
                 return -1
 
             # 取得情報Jsonをロード
             followers = json.loads(res.text)
             for user in followers['users']:
-                info.append(self.extract_follower(user, current_date))
+                info.append(self.__extract_follower(user, current_date))
 
             # 次のカーソルが存在しない場合終了
             if followers['next_cursor'] <= 0:
@@ -85,6 +88,7 @@ class TwitterController:
             # self.params['cursor'] = followers['next_cursor']
 
         # 取得した情報をDBに登録する
+        # TODO:DB登録は外で行う。ここではリスト返却にとどめる
         # self.db.BeginSession()
         db = Dbmaster()
         db.BeginSession()
