@@ -88,10 +88,4 @@ class TwitterController:
             # self.params['cursor'] = followers['next_cursor']
 
         # 取得した情報をDBに登録する
-        # TODO:DB登録は外で行う。ここではリスト返却にとどめる
-        # self.db.BeginSession()
-        db = Dbmaster()
-        db.BeginSession()
-        print(len(info))
-        db.insert_data(info)
-        db.commit()
+        return info
